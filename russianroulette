@@ -1,0 +1,70 @@
+players: public(DynArray[address, 500])
+losers: public( DynArray[address, 500])
+odds: public(uint256)
+playersTurn: public(uint256)
+creator: public(address)
+
+@external
+def __init__(_creator: address):
+    self.creator = _creator
+
+@external
+def setOdds(uint256 oneInThisMany):
+    assert block.coinbase = creator 
+        self.odds = oneInThisMany
+
+@external 
+def addPlayer(address Player):
+    lost: bool
+    playing: bool
+    holdera: address
+    holderb: address
+    for i in range(losers.len)
+        holdera = losers[i]
+        if holdera == Player
+            lost = true 
+            break
+    for i in range(players.len)
+        holderb = players[i]
+        if holderb == Player
+            playing = true 
+            break
+    if lost != true 
+        if playing != true  
+            players.append(Player)
+
+@internal 
+def lose (address Player):
+    holder: address
+    for i in range(players.len)
+        holder = players[.pop()]
+    losers.append(Player)
+
+@external
+def random():
+    random.randint(1, odds)
+
+@external
+def play():
+    num: uint256
+    playerTurn: unit256
+    currentPlayer: address
+    num = self.random()
+    playerTurn = 0
+    currentPlayer = players[playerTurn]
+    if num == 1
+        currentPlayer.lose()
+    else 
+        playerTurn = playerTurn + 1
+
+@external
+def isALoser(address person) -> bool: 
+    lost: bool
+    lost = false 
+    holdera: address
+    for i in range(losers.len)
+        holdera = losers[i]
+        if holdera == person
+            lost = true 
+            break
+    return lost 
