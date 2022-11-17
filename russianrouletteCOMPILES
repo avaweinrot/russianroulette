@@ -1,0 +1,73 @@
+players: public(DynArray[address, 500])
+losers: public( DynArray[address, 500])
+odds: public(uint256)
+playersTurn: public(uint256)
+creator: public(address)
+
+@external
+def __init__(_creator: address):
+    self.creator = _creator
+
+@external
+def setOdds(oneInThisMany: uint256):
+   if msg.sender == self.creator :
+        self.odds = oneInThisMany
+
+@external 
+def addPlayer(Player: address):
+    ar: DynArray[address, 500] = []
+    ar2: DynArray[address, 500] = []
+    lost: bool = False
+    playing: bool = False
+    holdera: address = 0x0000000000000000000000000000000000000000
+    holderb: address = 0x0000000000000000000000000000000000000000
+    for i in self.losers:
+        holdera = self.losers.pop()
+        ar.append(i)
+        if holdera == Player:
+            lost = True 
+            break
+    self.losers = ar
+    for i in self.players:
+        holderb = self.players.pop()
+        ar2.append(i)
+        if holderb == Player:
+            playing = True 
+            break
+    self.players = ar2
+    if lost != True:
+        if playing != True :
+            self.players.append(Player)
+
+@internal 
+def lose (Player: address):
+    holder: address = 0x0000000000000000000000000000000000000000
+    for i in self.players:
+        holder = self.players.pop()
+    self.losers.append(Player)
+
+@internal
+def random() -> uint256:
+    return (self.odds*3)-4
+
+@external
+def play():
+    num: uint256 = self.random()
+    if num == 1:
+        self.lose(self.players[self.playersTurn])
+    else :
+        self.playersTurn = self.playersTurn + 1
+
+@external
+def isALoser(person:  address) -> bool: 
+    ar: DynArray[address, 500] = []
+    lost: bool = False
+    holdera: address = 0x0000000000000000000000000000000000000000
+    for i in self.losers:
+        holdera = self.losers.pop()
+        ar.append(i)
+        if holdera == person:
+            lost = True 
+            break
+    self.losers = ar
+    return lost 
